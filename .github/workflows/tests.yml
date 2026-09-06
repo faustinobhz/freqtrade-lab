@@ -24,8 +24,8 @@ jobs:
       - run: python scripts/lab.py check
       - name: Verificar carregamento da estrategia na imagem oficial
         run: |
-          docker compose run --rm freqtrade list-strategies --config /freqtrade/config.json --strategy-path /freqtrade/user_data/strategies --print-json > /tmp/strategies.json
-          python -c "import json; names = json.load(open('/tmp/strategies.json')); assert 'ObserveStrategy' in names, names; print('PASS: ObserveStrategy importada na imagem oficial')"
+          docker compose run --rm freqtrade list-strategies --config /freqtrade/config.json --strategy-path /freqtrade/user_data/strategies --one-column > /tmp/strategies.txt
+          python -c "from pathlib import Path; names = Path('/tmp/strategies.txt').read_text().splitlines(); assert 'ObserveStrategy' in names, names; print('PASS: ObserveStrategy importada na imagem oficial')"
       - name: Limpar credenciais efemeras
         if: always()
         run: rm -rf .private .env
