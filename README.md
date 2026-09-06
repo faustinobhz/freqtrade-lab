@@ -6,7 +6,7 @@ Base inicial da ideia de Alison Faustino: executar e observar o Freqtrade com um
 
 ## Arquitetura
 
-Um container oficial do Freqtrade fornece motor, API autenticada e FreqUI. O histórico fica no SQLite do próprio bot. O host publica somente `127.0.0.1:8080`. Python no host serve apenas para configurar e verificar a instalação.
+Um container oficial do Freqtrade fornece motor, API autenticada e FreqUI. O histórico fica no SQLite do próprio bot, persistido no volume Docker `bot_data`. O host publica somente `127.0.0.1:8080`. Python no host serve apenas para configurar e verificar a instalação.
 
 O painel PHP antigo e seus instaladores não são incorporados. A interface personalizada será uma próxima etapa, após validar o núcleo. Não há MySQL, cadastro público, armazenamento de chaves de corretora, FreqAI ou acesso remoto nesta fase.
 
@@ -76,6 +76,8 @@ python3 scripts/lab.py start
 ```
 
 Não abra portas no roteador e não altere `127.0.0.1` para permitir acesso externo. Publicar o código no GitHub não hospeda o bot: ele continua executando no seu computador. A API dentro do container escuta em `0.0.0.0` para o encaminhamento do Docker; somente a porta local do host é publicada.
+
+O container usa o usuário `ftuser` da imagem oficial. Dados, logs e bancos ficam no volume Docker, enquanto o código da estratégia é montado somente para leitura. `stop` preserva os dados; não execute `docker compose down -v`, que remove o volume. A pasta `user_data` do repositório contém apenas a estratégia, não uma cópia do banco em execução.
 
 ## Verificações e limites
 

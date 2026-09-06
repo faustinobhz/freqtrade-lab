@@ -76,10 +76,10 @@ def init():
     target.chmod(0o644)
     with env.open("x", encoding="utf-8") as handle:
         handle.write("FREQTRADE_IMAGE=" + digest + "\n")
-        handle.write(f"LOCAL_UID={os.getuid() if hasattr(os, 'getuid') else 1000}\n")
-        handle.write(f"LOCAL_GID={os.getgid() if hasattr(os, 'getgid') else 1000}\n")
-    for name in ("logs", "data", "backtest_results"):
-        (ROOT / "user_data" / name).mkdir(parents=True, exist_ok=True)
+    run(["docker", "compose", "run", "--rm", "--entrypoint", "python", "freqtrade", "-c",
+         "from pathlib import Path; "
+         "[Path('/freqtrade/user_data', name).mkdir(parents=True, exist_ok=True) "
+         "for name in ('logs', 'data', 'backtest_results')]"])
     print("Configuração criada. Imagem fixada por digest; segredos não exibidos.")
     print("Execute: python3 scripts/lab.py start")
 
